@@ -15,7 +15,8 @@ var options = {
   pointDot: false, 
   datasetFill: false,
   showTooltips: false,
-  legendTemplate: legendTemplate
+  legendTemplate: legendTemplate,
+  scaleLabel: "<%=value%>%"
 };
 
 var months = [
