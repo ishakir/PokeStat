@@ -1,3 +1,6 @@
+/*
+ *  Constants
+ */
 var legendTemplate = '<div class="btn-group-vertical" role="group"> \
                         <% for (var i=0; i<datasets.length; i++){%> \
                           <button type="button" id="<%=datasets[i].label%>" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false" onclick="removePokemon(this.id)" style="color: <%=datasets[i].strokeColor%>;"> \
@@ -14,29 +17,44 @@ var options = {
   showTooltips: false,
   legendTemplate: legendTemplate
 };
-var fillColor = "rgba(0,0,0,0)";
 
+var months = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October"
+];
+
+var monthIndex = {
+  january: 0,
+  february: 1,
+  march: 2,
+  april: 3,
+  may: 4,
+  june: 5,
+  july: 6,
+  august: 7,
+  september: 8,
+  october: 9
+}
+
+/*
+ * Variables that represent of the state of the page
+ */
 var displayTier = "";
 var tier = "";
 
-var all_pokemon;
+var allPokemon;
 
 var pokemon = {};
 
-var months = [
-  "january",
-  "february",
-  "march",
-  "april",
-  "may",
-  "june",
-  "july",
-  "august",
-  "september",
-  "october"
-];
-
-var free_colors = [
+var freeColours = [
   "rgb(255,   0,   0)",
   "rgb(  0, 255,   0)",
   "rgb(  0,   0, 255)",
@@ -45,6 +63,9 @@ var free_colors = [
   "rgb(255,   0, 255)"
 ];
 
+/*
+ * Code
+ */
 $(document).ready( function () {
 
   $.ajaxSetup({
@@ -52,61 +73,15 @@ $(document).ready( function () {
   });
 
   changeTier("OU");
-
-  redrawChart();
   
 });
 
-var changeTier = function(newTier) {
-  
-  displayTier = newTier;
-  tier = newTier.toLowerCase();
+var refreshPage = function() {
+  var pokemonToPlot = Object.keys(pokemon);
 
-  // Move all colours back into the color map, make pokemon empty
-  $.each(Object.keys(pokemon), function(index, name) {
-    free_colors.unshift(pokemon[name]);
-    delete pokemon[name];
-  });
-
-  // Replace the pokemon data
-  $.getJSON("/api/pokemon/" + tier, function(data) {
-    all_pokemon = data;
-  });
-
-  $('#pickerColumn').empty();
-  $('#pickerColumn').html(
-    '<div id="pokemonPicker" style="text-align: center;"> \
-      <input id="pickerInput" class="typeahead" type="text" placeholder="Add a pokemon..."> \
-    </div>'
-  )
-  $('#pokemonPicker .typeahead').typeahead({
-      hint: false,
-      highlight: true,
-      minLength: 3
-    },
-    {
-      name: 'pokemon',
-      displayKey: 'value',
-      source: substringMatcher(all_pokemon)
-  }).bind('typeahead:selected', function($e, pokemon){
-    $('#pickerInput').val('');
-    addPokemon(pokemon.value)
-  });
-
-  hideChart();
-  displayUsageInfo();
-
-  $('#tierSmall').html("2014 statistics for the "+displayTier+" tier");
-  $('#tierSelected').html("You currently have the "+displayTier+" tier selected, to change tier, click on the dropdown on the right.")
-  $('#tierDropDown').html(displayTier+'\n<span class="caret"></span>');
-
-}
-
-var redrawChart = function() {
-  pokemon_to_plot = Object.keys(pokemon);
-  if(pokemon_to_plot.length >= 6) {
+  if(pokemonToPlot.length >= 6) {
     $('#pokemonPicker').hide();
-  } else if(pokemon_to_plot.length > 0) {
+  } else if(pokemonToPlot.length > 0) {
     $('#pickerInput').val('');
     $('#pokemonPicker').show();
   } else {
@@ -115,80 +90,168 @@ var redrawChart = function() {
     return;
   }
 
+  redrawChart();
+
+};
+
+var changeTier = function(newTier) {
+  
+  displayTier = newTier;
+  tier = newTier.toLowerCase();
+
+  // Move all colours back into the color map, make pokemon empty
+  $.each(Object.keys(pokemon), function(index, name) {
+    freeColours.unshift(pokemon[name].color);
+    delete pokemon[name];
+  });
+
+  // Replace the pokemon data
+  $.getJSON("/api/pokemon/" + tier, function(data) {
+    allPokemon = data;
+  });
+
+  $('#pickerColumn').empty();
+  $('#pickerColumn').html(
+    '<div id="pokemonPicker" style="text-align: center;"> \
+      <input id="pickerInput" class="typeahead" type="text" placeholder="Add a pokemon..."> \
+    </div>'
+  );
+
+  $('#pokemonPicker .typeahead').typeahead({
+      hint: false,
+      highlight: true,
+      minLength: 3
+    },
+    {
+      name: 'pokemon',
+      displayKey: 'value',
+      source: substringMatcher(allPokemon)
+  }).bind('typeahead:selected', function($e, pokemon){
+    $('#pickerInput').val('');
+    addPokemon(pokemon.value)
+  });
+
+  refreshPage();
+
+};
+
+var redrawChart = function() {
   hideUsageInfo();
   showChart();
 
-  var pokemon_data = $.map(pokemon_to_plot, function(name, index) {
-    var json_data;
-    $.getJSON("/api/pokemon/"+name+"/"+tier+"/usage", function(data) {
-      json_data = data;
-    });
-    var months_data = $.map(months, function(month, index) {
-      if(json_data[month]) {
-        return json_data[month];
-      } else {
-        return (json_data[months[index - 1]] + json_data[months[index + 1]]) / 2;
+  var smallestMonthIndex = months.length;
+  var largestMonthIndex = 0;
+
+  Object.keys(pokemon).forEach(function(name) {
+    Object.keys(pokemon[name].data).forEach(function(month) {
+      var currentMonthIndex = monthIndex[month];
+      if(currentMonthIndex > largestMonthIndex) {
+        largestMonthIndex = currentMonthIndex;
+      } else if(currentMonthIndex < smallestMonthIndex) {
+        smallestMonthIndex = currentMonthIndex;
       }
     });
+  });
+
+  var monthsForAllPokemon = months.slice(smallestMonthIndex, largestMonthIndex + 1);
+
+  var pokemonData = $.map(Object.keys(pokemon), function(name, index) {
+    var pokemonUsageNumbers = pokemon[name].data;
+
+    var monthsData = $.map(monthsForAllPokemon, function(month, index) {
+      var currentMonth = month.toLowerCase();
+
+      var lastMonth = months[monthIndex[currentMonth] - 1];
+      var nextMonth = months[monthIndex[currentMonth] + 1];
+
+      if(lastMonth) {
+        lastMonth = lastMonth.toLowerCase();
+      }
+      if(nextMonth) {
+        nextMonth = nextMonth.toLowerCase();
+      }
+
+      var currentMonthData = pokemonUsageNumbers[currentMonth];
+      var lastMonthData = pokemonUsageNumbers[lastMonth];
+      var nextMonthData = pokemonUsageNumbers[nextMonth];
+
+      if(currentMonthData) {
+        return currentMonthData;
+      } else if(lastMonthData && nextMonthData) {
+        return (lastMonthData + nextMonthData) / 2;
+      } else {
+        return 0;
+      }
+    });
+    
     return {
       label: name,
-      strokeColor: pokemon[name],
-      data: months_data
+      strokeColor: pokemon[name].color,
+      data: monthsData
     }
   });
 
-
   var data = {
-    labels: months,
-    datasets: pokemon_data
+    labels: monthsForAllPokemon,
+    datasets: pokemonData
   };
 
   var usageChart = new Chart($('#usageChart').get(0).getContext("2d")).Line(data, options);
 
   $('#usageLegend').html(usageChart.generateLegend())
-}
+};
 
 var addPokemon = function(name) {
   if(pokemon[name]) {
     showErrorMessage(name + " is already on the chart!");
     return;
   }
-  var newColor = free_colors.shift();
-  pokemon[name] = newColor;
-  redrawChart();
-}
+
+  var newColor = freeColours.shift();
+
+  pokemon[name] = {};
+  pokemon[name].color = newColor;
+  $.getJSON("/api/pokemon/"+name+"/"+tier+"/usage", function(data) {
+    pokemon[name].data = data;
+  });
+
+  refreshPage();
+};
 
 var removePokemon = function(name) {
     var color = pokemon[name];
     delete pokemon[name];
-    free_colors.unshift(color);
-    redrawChart();
-}
+    freeColours.unshift(color);
+    refreshPage();
+};
 
 var displayUsageInfo = function() {
+  $('#tierSmall').html("2014 statistics for the "+displayTier+" tier");
+  $('#tierSelected').html("You currently have the "+displayTier+" tier selected, to change tier, click on the dropdown on the right.")
+  $('#tierDropDown').html(displayTier+'\n<span class="caret"></span>');
   $('#usageRow').show();
-}
+};
 
 var hideUsageInfo = function() {
   $('#usageRow').hide();
-}
+};
 
 var showChart = function() {
   $('#chartRow').show();
-}
+};
 
 var hideChart = function() {
   $('#chartRow').hide();
-}
+};
 
 var showErrorMessage = function(message) {
   $('#errorMessage').html(message);
   $('#errorMessageRow').show();
-}
+};
 
 var hideErrorMessage = function() {
   $('#errorMessageRow').hide();
-}
+};
 
 var substringMatcher = function(strs) {
   return function findMatches(q, cb) {
