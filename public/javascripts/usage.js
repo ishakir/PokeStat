@@ -102,8 +102,7 @@ var changeTier = function(newTier) {
 
   // Move all colours back into the color map, make pokemon empty
   $.each(Object.keys(pokemon), function(index, name) {
-    freeColours.unshift(pokemon[name].color);
-    delete pokemon[name];
+    removePokemon(name);
   });
 
   // Replace the pokemon data
@@ -220,9 +219,8 @@ var addPokemon = function(name) {
 };
 
 var removePokemon = function(name) {
-    var color = pokemon[name];
+    freeColours.unshift(pokemon[name].color);
     delete pokemon[name];
-    freeColours.unshift(color);
     refreshPage();
 };
 
