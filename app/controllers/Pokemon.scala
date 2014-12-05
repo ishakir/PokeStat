@@ -42,7 +42,7 @@ object Pokemon extends Controller {
 
   private def allFiles(tier: String): Map[String, List[JsValue]] = {
     val projectRoot = Play.application.path.getAbsolutePath
-    val statFiles = new File(projectRoot + "/data/"+tier+"/usage").listFiles
+    val statFiles = new File(projectRoot + "/old/data/"+tier+"/usage").listFiles
     val statFileHash = statFiles.map (file => file.getName.split('.').head -> file).toMap
     val statStringHash = statFileHash.mapValues(file => Source.fromFile(file.getAbsolutePath).mkString)
     val statJsonHash = statStringHash.mapValues(string => Json.parse(string))
