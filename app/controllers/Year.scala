@@ -6,19 +6,19 @@ import play.api.libs.json.JsNumber
 import play.api.libs.json.JsObject
 import play.api.libs.json.JsValue
 
-object Generation extends REST {
+object Year extends REST {
 
-  val tableName: String = "generations"
+  val tableName: String = "years"
 
   val parameters: Map[String, (String, String) => ValidationResult] = Map(
-    "number" -> validateByte
+    "number" -> validateShort
   )
 
-  protected def single(row: Row): JsValue = {
-    row match {
-      case Row(id: Int, number: Byte) => {
+  protected def single(generationRow: Row): JsValue = {
+    generationRow match {
+      case Row(id: Int, number: Short) => {
         JsObject(
-          "id"     -> JsNumber(id) ::
+          "id" -> JsNumber(id) ::
           "number" -> JsNumber(number) ::
           Nil
         )

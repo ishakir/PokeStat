@@ -12,11 +12,6 @@ import play.api.libs.json.JsValue
 
 import scala.concurrent._
 
-/**
- * Add your spec here.
- * You can mock out a whole application including requests, plugins etc.
- * For more information, consult the wiki.
- */
 @RunWith(classOf[JUnitRunner])
 class GenerationSpec extends Specification {
 
@@ -60,6 +55,11 @@ class GenerationSpec extends Specification {
     routeBase
   )
 
+  def fakeGetQuery(number: Int) = FakeRequest(
+    GET,
+    routeBase + "?number=" + number
+  )
+
   def fakeGetByIdRequest(number: Int) = FakeRequest(
     GET,
     routeBase + "/" + number
@@ -97,7 +97,7 @@ class GenerationSpec extends Specification {
         400,
         jsonContent => {
           (jsonContent \ "metadata" \ "status").as[String] must equalTo("error")
-          (jsonContent \ "metadata" \ "message").as[String] must contain("Missing")
+          (jsonContent \ "metadata" \ "messages")(0).as[String] must contain("Missing")
         }
       )
     }
@@ -113,7 +113,7 @@ class GenerationSpec extends Specification {
         400,
         jsonContent => {
           (jsonContent \ "metadata" \ "status").as[String] must equalTo("error")
-          (jsonContent \ "metadata" \ "message").as[String] must contain("Missing")
+          (jsonContent \ "metadata" \ "messages")(0).as[String] must contain("Missing")
         }
       )
     }
@@ -140,7 +140,7 @@ class GenerationSpec extends Specification {
           400,
           jsonContent => {
             (jsonContent \ "metadata" \ "status").as[String] must equalTo("error")
-            (jsonContent \ "metadata" \ "message").as[String] must contain("violation")
+            (jsonContent \ "metadata" \ "messages")(0).as[String] must contain("violation")
           }
         )
       )
@@ -171,6 +171,30 @@ class GenerationSpec extends Specification {
         )
       )
     }
+
+    "only return a generation with a particular number" in new WithApplication {
+      val fakePostRequestOne = fakePostRequestWithNumber(1)
+      val fakePostRequestTwo = fakePostRequestWithNumber(2)
+
+      sendJsonRequest(
+        fakePostRequestOne,
+        200,
+        jsonContent => sendJsonRequest(
+          fakePostRequestTwo,
+          200,
+          jsonContent => sendEmptyRequest(
+            fakeGetQuery(1),
+            200,
+            jsonContent => {
+              (jsonContent \ "metadata" \ "status").as[String] must equalTo("success")
+              val data = (jsonContent \ "data").as[List[JsValue]]
+              data.size must equalTo(1)
+              (data.head \ "number").as[Int] must equalTo(1)
+            }
+          ) 
+        )
+      )
+    }
   }
 
   "Generation GET by Id" should {
@@ -180,7 +204,7 @@ class GenerationSpec extends Specification {
         404,
         jsonContent => {
           (jsonContent \ "metadata" \ "status").as[String] must equalTo("error")
-          (jsonContent \ "metadata" \ "message").as[String] must contain("found")
+          (jsonContent \ "metadata" \ "messages")(0).as[String] must contain("found")
         }
       )
     }
@@ -208,7 +232,7 @@ class GenerationSpec extends Specification {
         404,
         jsonContent => {
           (jsonContent \ "metadata" \ "status").as[String] must equalTo("error")
-          (jsonContent \ "metadata" \ "message").as[String] must contain("found")
+          (jsonContent \ "metadata" \ "messages")(0).as[String] must contain("found")
         }
       )
     }
@@ -243,7 +267,7 @@ class GenerationSpec extends Specification {
         404,
         jsonContent => {
           (jsonContent \ "metadata" \ "status").as[String] must equalTo("error")
-          (jsonContent \ "metadata" \ "message").as[String] must contain("found")
+          (jsonContent \ "metadata" \ "messages")(0).as[String] must contain("found")
         }
       )
     }
@@ -278,7 +302,7 @@ class GenerationSpec extends Specification {
             400,
             jsonContent => {
               (jsonContent \ "metadata" \ "status").as[String] must equalTo("error")
-              (jsonContent \ "metadata" \ "message").as[String] must contain("violation")
+              (jsonContent \ "metadata" \ "messages")(0).as[String] must contain("violation")
             }
           )
         )
@@ -291,7 +315,7 @@ class GenerationSpec extends Specification {
         400,
         jsonContent => {
           (jsonContent \ "metadata" \ "status").as[String] must equalTo("error")
-          (jsonContent \ "metadata" \ "message").as[String] must contain("Missing")
+          (jsonContent \ "metadata" \ "messages")(0).as[String] must contain("nothing")
         }
       )
     }
@@ -308,7 +332,7 @@ class GenerationSpec extends Specification {
         400,
         jsonContent => {
           (jsonContent \ "metadata" \ "status").as[String] must equalTo("error")
-          (jsonContent \ "metadata" \ "message").as[String] must contain("Missing")
+          (jsonContent \ "metadata" \ "messages")(0).as[String] must contain("nothing")
         }
       )
     }

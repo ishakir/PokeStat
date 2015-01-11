@@ -98,16 +98,27 @@ CREATE TABLE tier_months(
   FOREIGN KEY (tier_id)  REFERENCES tiers(id)
 );
 
-CREATE TABLE stat_records(
+CREATE TABLE tier_ratings(
   id            INT UNSIGNED NOT NULL AUTO_INCREMENT,
 
-  pokemon_id    INT UNSIGNED NOT NULL,
+  rating        INT UNSIGNED NOT NULL,
   tier_month_id INT UNSIGNED NOT NULL,
 
   PRIMARY KEY (id),
 
-  FOREIGN KEY (pokemon_id)    REFERENCES pokemon(id),
-  FOREIGN KEY (tier_month_id) REFERENCES tier_months(id)
+  FOREIGN KEY (tier_month_id) REFERENCES tier_ratings(id)
+);
+
+CREATE TABLE stat_records(
+  id             INT UNSIGNED NOT NULL AUTO_INCREMENT,
+
+  pokemon_id     INT UNSIGNED NOT NULL,
+  tier_rating_id INT UNSIGNED NOT NULL,
+
+  PRIMARY KEY (id),
+
+  FOREIGN KEY (pokemon_id)     REFERENCES pokemon(id),
+  FOREIGN KEY (tier_rating_id) REFERENCES tier_ratings(id)
 );
 
 CREATE TABLE ability_records(
@@ -160,22 +171,16 @@ CREATE TABLE lead_records(
   FOREIGN KEY (stat_record_id) REFERENCES stat_records(id)
 );
 
-CREATE TABLE moveset_records(
+CREATE TABLE move_records(
   id             INT UNSIGNED NOT NULL AUTO_INCREMENT,
   number         INT UNSIGNED NOT NULL,
 
-  move_one_id    INT UNSIGNED NOT NULL,
-  move_two_id    INT UNSIGNED NOT NULL,
-  move_three_id  INT UNSIGNED NOT NULL,
-  move_four_id   INT UNSIGNED NOT NULL,
+  move_id        INT UNSIGNED NOT NULL,
   stat_record_id INT UNSIGNED NOT NULL,
 
   PRIMARY KEY (id),
 
-  FOREIGN KEY (move_one_id)    REFERENCES moves(id),
-  FOREIGN KEY (move_two_id)    REFERENCES moves(id),
-  FOREIGN KEY (move_three_id)  REFERENCES moves(id),
-  FOREIGN KEY (move_four_id)   REFERENCES moves(id),
+  FOREIGN KEY (move_id)    REFERENCES moves(id),
   FOREIGN KEY (stat_record_id) REFERENCES stat_records(id)
 );
 

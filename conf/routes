@@ -20,11 +20,144 @@ GET     /graph                                                                  
 #GET     /api/pokemon/:pokemon/:generation/:tier/:year/:month/:rating/teammates  controllers.Pokemon.teammates(#pokemon: String, generation: String, tier: String, year: String, month: String, rating: String)
 
 # Generation as a resource
-POST    /api/generations      controllers.Generation.create
-GET     /api/generations      controllers.Generation.getWithParams(number: Option[Int])
-GET     /api/generations/:id  controllers.Generation.getById(id: Int)
-PUT     /api/generations/:id  controllers.Generation.update(id: Int) 
-DELETE  /api/generations/:id  controllers.Generation.delete(id: Int)
+POST    /api/generations            controllers.Generation.create
+GET     /api/generations            controllers.Generation.getWithParams
+GET     /api/generations/:id        controllers.Generation.getById(id: Int)
+PUT     /api/generations/:id        controllers.Generation.update(id: Int) 
+DELETE  /api/generations/:id        controllers.Generation.delete(id: Int)
+
+# Tier as a resource
+POST    /api/tiers                  controllers.Tier.create
+GET     /api/tiers                  controllers.Tier.getWithParams
+GET     /api/tiers/:id              controllers.Tier.getById(id: Int)
+PUT     /api/tiers/:id              controllers.Tier.update(id: Int)
+DELETE  /api/tiers/:id              controllers.Tier.delete(id: Int)
+
+# Year as a resource
+POST    /api/years                  controllers.Year.create
+GET     /api/years                  controllers.Year.getWithParams
+GET     /api/years/:id              controllers.Year.getById(id: Int)
+PUT     /api/years/:id              controllers.Year.update(id: Int)
+DELETE  /api/years/:id              controllers.Year.delete(id: Int)
+
+# Month as a resource
+POST    /api/months                 controllers.Month.create
+GET     /api/months                 controllers.Month.getWithParams
+GET     /api/months/:id             controllers.Month.getById(id: Int)
+PUT     /api/months/:id             controllers.Month.update(id: Int)
+DELETE  /api/months/:id             controllers.Month.delete(id: Int)
+
+# Ability as a resource
+POST    /api/abilities              controllers.Ability.create
+GET     /api/abilities              controllers.Ability.getWithParams
+GET     /api/abilities/:id          controllers.Ability.getById(id: Int)
+PUT     /api/abilities/:id          controllers.Ability.update(id: Int)
+DELETE  /api/abilities/:id          controllers.Ability.delete(id: Int)
+
+# DBPokemon as a resource
+POST    /api/dbpokemon              controllers.DBPokemon.create
+GET     /api/dbpokemon              controllers.DBPokemon.getWithParams
+GET     /api/dbpokemon/:id          controllers.DBPokemon.getById(id: Int)
+PUT     /api/dbpokemon/:id          controllers.DBPokemon.update(id: Int)
+DELETE  /api/dbpokemon/:id          controllers.DBPokemon.delete(id: Int)
+
+# EVSpread as a resource
+POST    /api/evspreads              controllers.EVSpread.create
+GET     /api/evspreads              controllers.EVSpread.getWithParams
+GET     /api/evspreads/:id          controllers.EVSpread.getById(id: Int)
+PUT     /api/evspreads/:id          controllers.EVSpread.update(id: Int)
+DELETE  /api/evspreads/:id          controllers.EVSpread.delete(id: Int)
+
+# Item as a resource
+POST    /api/items                  controllers.Item.create
+GET     /api/items                  controllers.Item.getWithParams
+GET     /api/items/:id              controllers.Item.getById(id: Int)
+PUT     /api/items/:id              controllers.Item.update(id: Int)
+DELETE  /api/items/:id              controllers.Item.delete(id: Int)
+
+# Move as a resource
+POST    /api/moves                  controllers.Move.create
+GET     /api/moves                  controllers.Move.getWithParams
+GET     /api/moves/:id              controllers.Move.getById(id: Int)
+PUT     /api/moves/:id              controllers.Move.update(id: Int)
+DELETE  /api/moves/:id              controllers.Move.delete(id: Int)
+
+# Nature as a resource
+POST    /api/natures                controllers.Nature.create
+GET     /api/natures                controllers.Nature.getWithParams
+GET     /api/natures/:id            controllers.Nature.getById(id: Int)
+PUT     /api/natures/:id            controllers.Nature.update(id: Int)
+DELETE  /api/natures/:id            controllers.Nature.delete(id: Int)
+
+# AbilityRecord as a resource
+POST    /api/abilityrecords         controllers.AbilityRecord.create
+GET     /api/abilityrecords         controllers.AbilityRecord.getWithParams
+GET     /api/abilityrecords/:id     controllers.AbilityRecord.getById(id: Int)
+PUT     /api/abilityrecords/:id     controllers.AbilityRecord.update(id: Int)
+DELETE  /api/abilityrecords/:id     controllers.AbilityRecord.delete(id: Int)
+
+# CheckRecord as a resource
+POST    /api/checkrecords           controllers.CheckRecord.create
+GET     /api/checkrecords           controllers.CheckRecord.getWithParams
+GET     /api/checkrecords/:id       controllers.CheckRecord.getById(id: Int)
+PUT     /api/checkrecords/:id       controllers.CheckRecord.update(id: Int)
+DELETE  /api/checkrecords/:id       controllers.CheckRecord.delete(id: Int)
+
+# ItemRecord as a resource
+POST    /api/itemrecords            controllers.ItemRecord.create
+GET     /api/itemrecords            controllers.ItemRecord.getWithParams
+GET     /api/itemrecords/:id        controllers.ItemRecord.getById(id: Int)
+PUT     /api/itemrecords/:id        controllers.ItemRecord.update(id: Int)
+DELETE  /api/itemrecords/:id        controllers.ItemRecord.delete(id: Int)
+
+# LeadRecord as a resource
+POST    /api/leadrecords            controllers.LeadRecord.create
+GET     /api/leadrecords            controllers.LeadRecord.getWithParams
+GET     /api/leadrecords/:id        controllers.LeadRecord.getById(id: Int)
+PUT     /api/leadrecords/:id        controllers.LeadRecord.update(id: Int)
+DELETE  /api/leadrecords/:id        controllers.LeadRecord.delete(id: Int)
+
+# MoveRecord as a resource
+POST    /api/moverecords            controllers.MoveRecord.create
+GET     /api/moverecords            controllers.MoveRecord.getWithParams
+GET     /api/moverecords/:id        controllers.MoveRecord.getById(id: Int)
+PUT     /api/moverecords/:id        controllers.MoveRecord.update(id: Int)
+DELETE  /api/moverecords/:id        controllers.MoveRecord.delete(id: Int)
+
+# SpreadRecord as a resource
+POST    /api/spreadrecords          controllers.SpreadRecord.create
+GET     /api/spreadrecords          controllers.SpreadRecord.getWithParams
+GET     /api/spreadrecords/:id      controllers.SpreadRecord.getById(id: Int)
+PUT     /api/spreadrecords/:id      controllers.SpreadRecord.update(id: Int)
+DELETE  /api/spreadrecords/:id      controllers.SpreadRecord.delete(id: Int)
+
+# TeammateRecord as a resource
+POST    /api/teammaterecords        controllers.TeammateRecord.create
+GET     /api/teammaterecords        controllers.TeammateRecord.getWithParams
+GET     /api/teammaterecords/:id    controllers.TeammateRecord.getById(id: Int)
+PUT     /api/teammaterecords/:id    controllers.TeammateRecord.update(id: Int)
+DELETE  /api/teammaterecords/:id    controllers.TeammateRecord.delete(id: Int)
+
+# StatRecord as a resource
+POST    /api/statrecords            controllers.StatRecord.create
+GET     /api/statrecords            controllers.StatRecord.getWithParams
+GET     /api/statrecords/:id        controllers.StatRecord.getById(id: Int)
+PUT     /api/statrecords/:id        controllers.StatRecord.update(id: Int)
+DELETE  /api/statrecords/:id        controllers.StatRecord.delete(id: Int)
+
+# TierMonth as a resource
+POST    /api/tiermonths             controllers.TierMonth.create
+GET     /api/tiermonths             controllers.TierMonth.getWithParams
+GET     /api/tiermonths/:id         controllers.TierMonth.getById(id: Int)
+PUT     /api/tiermonths/:id         controllers.TierMonth.update(id: Int)
+DELETE  /api/tiermonths/:id         controllers.TierMonth.delete(id: Int)
+
+# TierRating as a resource
+POST    /api/tierratings            controllers.TierRating.create
+GET     /api/tierratings            controllers.TierRating.getWithParams
+GET     /api/tierratings/:id        controllers.TierRating.getById(id: Int)
+PUT     /api/tierratings/:id        controllers.TierRating.update(id: Int)
+DELETE  /api/tierratings/:id        controllers.TierRating.delete(id: Int)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file                                                           controllers.Assets.at(path="/public", file)

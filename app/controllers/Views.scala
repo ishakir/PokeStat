@@ -9,4 +9,8 @@ object Views extends Controller {
     Ok(views.html.usage())
   }
 
+  def graph() = Action {
+    Ok(views.html.graph())
+  }
+
 }
