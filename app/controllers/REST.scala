@@ -188,19 +188,19 @@ trait REST extends Controller {
   }
 
   protected def validateByte(name: String, number: String) = number.toInt match {
-    case num if num < 1   => new ByteTooSmall(name, num.toString)
+    case num if num < 0   => new ByteTooSmall(name, num.toString)
     case num if num > 255 => new ByteTooLarge(name, num.toString)
     case num              => new ValidationSuccess(name, num.toString)
   }
 
   protected def validateShort(name: String, number: String) = number.toInt match {
-    case num if num < 1     => new ShortTooSmall(name, num.toString)
+    case num if num < 0     => new ShortTooSmall(name, num.toString)
     case num if num > 32767 => new ShortTooLarge(name, num.toString)
     case num                => new ValidationSuccess(name, num.toString)
   }
 
   protected def validateInt(name: String, number: String) = number.toInt match {
-    case num if num < 1 => new IntTooSmall(name, num.toString)
+    case num if num < 0 => new IntTooSmall(name, num.toString)
     case num            => new ValidationSuccess(name, num.toString)
   }
 

@@ -21,15 +21,15 @@ object EVSpread extends REST {
 
   protected def single(row: Row): JsValue = {
     row match {
-      case Row(id: Int, number: Byte) => {
+      case Row(id: Int, hp: Short, attack: Short, defence: Short, spa: Short, spd: Short, speed: Short) => {
         JsObject(
           "id"      -> JsNumber(id) ::
-          "hp"      -> JsNumber(number) ::
-          "attack"  -> JsNumber(number) ::
-          "defence" -> JsNumber(number) ::
-          "spa"     -> JsNumber(number) ::
-          "spd"     -> JsNumber(number) ::
-          "speed"   -> JsNumber(number) ::
+          "hp"      -> JsNumber(hp) ::
+          "attack"  -> JsNumber(attack) ::
+          "defence" -> JsNumber(defence) ::
+          "spa"     -> JsNumber(spa) ::
+          "spd"     -> JsNumber(spd) ::
+          "speed"   -> JsNumber(speed) ::
           Nil
         )
       }

@@ -2,23 +2,6 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-GET     /                                                                       controllers.Application.index
-GET     /usage                                                                  controllers.Views.usage
-GET     /graph                                                                  controllers.Views.graph
-
-# Api
-#GET     /api/                                                                   controllers.Resource.generations
-#GET     /api/:generation                                                        controllers.Resource.tiers(#generation: String)
-#GET     /api/:generation/:tier                                                  controllers.Resource.years(#generation: String, tier: String)
-#GET     /api/:generation/:tier/:year                                            controllers.Resource.months(#generation: String, tier: String, year: String)
-#GET     /api/:generation/:tier/:year/:month                                     controllers.Resource.ratings(#generation: String, tier: String, year: String, month: String)
-
-#GET     /api/pokemon/:pokemon/:tier/usage                                       controllers.Pokemon.usage(pokemon: #String, tier: String)
-#GET     /api/pokemon/:tier                                                      controllers.Pokemon.all(tier: String)
-
-#GET     /api/pokemon/:generation/:tier/:year/:month/:rating                     controllers.Pokemon.allNew(#generation: String, tier: String, year: String, month: String, rating: String)
-#GET     /api/pokemon/:pokemon/:generation/:tier/:year/:month/:rating/teammates  controllers.Pokemon.teammates(#pokemon: String, generation: String, tier: String, year: String, month: String, rating: String)
-
 # Generation as a resource
 POST    /api/generations            controllers.Generation.create
 GET     /api/generations            controllers.Generation.getWithParams
