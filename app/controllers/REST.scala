@@ -204,7 +204,7 @@ trait REST extends Controller {
     case num            => new ValidationSuccess(name, num.toString)
   }
 
-  protected def allStringsValidator(name: String, value: String) = new ValidationSuccess(name, "'" + value + "'")
+  protected def allStringsValidator(name: String, value: String) = new ValidationSuccess(name, "'" + value.replaceAll("'","''") + "'")
 
   // Resource formatting
   private def formatUnique(rows: Seq[Row]): Option[JsValue] = {
