@@ -77,7 +77,7 @@ CREATE TABLE years(
 
 CREATE TABLE months(
   id      INT          UNSIGNED NOT NULL AUTO_INCREMENT,
-  name    VARCHAR(255)          NOT NULL,
+  number  SMALLINT     UNSIGNED NOT NULL,
 
   year_id INT          UNSIGNED NOT NULL,
 
