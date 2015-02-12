@@ -11,13 +11,13 @@ object LeadRecord extends REST {
   val tableName: String = "lead_records"
 
   val parameters: Map[String, (String, String) => ValidationResult] = Map(
-    "number"         -> validateInt,
+    "number"         -> validateFloat,
     "stat_record_id" -> validateInt
   )
 
   protected def single(row: Row): JsValue = {
     row match {
-      case Row(id: Int, number: Int, stat_record_id: Int) => {
+      case Row(id: Int, number: Double, stat_record_id: Int) => {
         JsObject(
           "id"             -> JsNumber(id) ::
           "number"         -> JsNumber(number) ::

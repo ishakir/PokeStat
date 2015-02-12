@@ -11,7 +11,7 @@ object SpreadRecord extends REST {
   val tableName: String = "spread_records"
 
   val parameters: Map[String, (String, String) => ValidationResult] = Map(
-    "number"         -> validateInt,
+    "number"         -> validateFloat,
     "ev_spread_id"   -> validateInt,
     "nature_id"      -> validateInt,
     "stat_record_id" -> validateInt
@@ -19,7 +19,7 @@ object SpreadRecord extends REST {
 
   protected def single(row: Row): JsValue = {
     row match {
-      case Row(id: Int, number: Int, ev_spread_id: Int, nature_id: Int, stat_record_id: Int) => {
+      case Row(id: Int, number: Double, ev_spread_id: Int, nature_id: Int, stat_record_id: Int) => {
         JsObject(
           "id"             -> JsNumber(id) ::
           "number"         -> JsNumber(number) ::

@@ -122,11 +122,11 @@ CREATE TABLE stat_records(
 );
 
 CREATE TABLE ability_records(
-  id             INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  number         INT UNSIGNED NOT NULL,
+  id             INT    UNSIGNED NOT NULL AUTO_INCREMENT,
+  number         FLOAT           NOT NULL,
 
-  ability_id     INT UNSIGNED NOT NULL,
-  stat_record_id INT UNSIGNED NOT NULL,
+  ability_id     INT    UNSIGNED NOT NULL,
+  stat_record_id INT    UNSIGNED NOT NULL,
 
   PRIMARY KEY (id),
 
@@ -135,11 +135,11 @@ CREATE TABLE ability_records(
 );
 
 CREATE TABLE check_records(
-  id             INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  number         INT UNSIGNED NOT NULL,
+  id             INT   UNSIGNED NOT NULL AUTO_INCREMENT,
+  number         FLOAT          NOT NULL,
 
-  pokemon_id     INT UNSIGNED NOT NULL,
-  stat_record_id INT UNSIGNED NOT NULL,
+  pokemon_id     INT   UNSIGNED NOT NULL,
+  stat_record_id INT   UNSIGNED NOT NULL,
 
   PRIMARY KEY (id),
 
@@ -148,11 +148,11 @@ CREATE TABLE check_records(
 );
 
 CREATE TABLE item_records(
-  id             INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  number         INT UNSIGNED NOT NULL,
+  id             INT   UNSIGNED NOT NULL AUTO_INCREMENT,
+  number         FLOAT          NOT NULL,
 
-  item_id        INT UNSIGNED NOT NULL,
-  stat_record_id INT UNSIGNED NOT NULL,
+  item_id        INT   UNSIGNED NOT NULL,
+  stat_record_id INT   UNSIGNED NOT NULL,
 
   PRIMARY KEY (id),
 
@@ -161,10 +161,10 @@ CREATE TABLE item_records(
 );
 
 CREATE TABLE lead_records(
-  id             INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  number         INT UNSIGNED NOT NULL,
+  id             INT   UNSIGNED NOT NULL AUTO_INCREMENT,
+  number         FLOAT          NOT NULL,
 
-  stat_record_id INT UNSIGNED NOT NULL,
+  stat_record_id INT   UNSIGNED NOT NULL,
 
   PRIMARY KEY (id),
 
@@ -172,11 +172,11 @@ CREATE TABLE lead_records(
 );
 
 CREATE TABLE move_records(
-  id             INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  number         INT UNSIGNED NOT NULL,
+  id             INT   UNSIGNED NOT NULL AUTO_INCREMENT,
+  number         FLOAT          NOT NULL,
 
-  move_id        INT UNSIGNED NOT NULL,
-  stat_record_id INT UNSIGNED NOT NULL,
+  move_id        INT   UNSIGNED NOT NULL,
+  stat_record_id INT   UNSIGNED NOT NULL,
 
   PRIMARY KEY (id),
 
@@ -186,7 +186,7 @@ CREATE TABLE move_records(
 
 CREATE TABLE spread_records(
   id             INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  number         INT UNSIGNED NOT NULL,
+  number         FLOAT        NOT NULL,
 
   ev_spread_id   INT UNSIGNED NOT NULL,
   nature_id      INT UNSIGNED NOT NULL,
@@ -201,7 +201,7 @@ CREATE TABLE spread_records(
 
 CREATE TABLE teammate_records(
   id     INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  number INT UNSIGNED NOT NULL,
+  number FLOAT        NOT NULL,
 
   pokemon_id     INT UNSIGNED NOT NULL,
   stat_record_id INT UNSIGNED NOT NULL,
