@@ -1,95 +1,213 @@
 package controllers
 
-import java.io.File
+import anorm.Row
+import anorm.SQL
 
-import play.api._
+import play.api.db.DB
 import play.api.libs.json.Json
 import play.api.libs.json.JsArray
 import play.api.libs.json.JsNumber
+import play.api.libs.json.JsNull
 import play.api.libs.json.JsObject
 import play.api.libs.json.JsString
-import play.api.libs.json.JsValue
+import play.api.mvc.Action
+import play.api.mvc.Controller
 import play.api.Play.current
-import play.api.mvc._
 
-import scala.io.Source
+import utils.Resource
+
+class StatRecordInfo(
+  val generation: Byte,
+  val tier: String, 
+  val rating: Int, 
+  val year: Short, 
+  val month: Short, 
+  val statRecordId: Int
+)
 
 object Pokemon extends Controller {
 
-  def usage(pokemon: String, tier: String) = Action {
-    val statPokemonHash = allFiles(tier).mapValues(list => list.find {
-      case jsArray: JsArray => jsArray(1) match {
-        case string: JsString => string.value.equalsIgnoreCase(pokemon)
+  def get(pokemon: String) = Action { request =>
+    DB.withConnection { implicit c =>
+      SQL("SELECT id from pokemon where name='"+pokemon+"';")().toList match {
+        case Nil => NotFound(Resource.errorStructure(List("No pokemon named '"+pokemon+"' found!")))
+        case row :: Nil => getPokemonInfoFromRow(row)
+        case _ => InternalServerError(Resource.errorStructure(List("Multiple pokemon found with name '"+pokemon+"'! My bad.")))
       }
-    })
-    val usageHash = statPokemonHash.mapValues {
-      case Some(value) => value match {
-        case array: JsArray => array(2) match {
-          case string: JsString => string.value.dropRight(1).toDouble
+    }
+  }
+
+  def query(generation: Int) = Action { request =>
+    Ok(
+      Json.toJson(
+        DB.withConnection { implicit c =>
+          SQL("""SELECT pokemon.name
+                 FROM stat_records
+                 INNER JOIN tier_ratings ON stat_records.tier_rating_id = tier_ratings.id
+                 INNER JOIN tier_months ON tier_ratings.tier_month_id = tier_months.id
+                 INNER JOIN tiers ON tier_months.tier_id = tiers.id
+                 INNER JOIN generations ON tiers.generation_id = generations.id
+                 INNER JOIN pokemon ON stat_records.pokemon_id = pokemon.id
+                 WHERE generations.number = """+generation
+          )().toList.map {
+            case Row(pokemon: String) => pokemon
+          }
+        }
+      )
+    )
+  }
+
+  private def getPokemonInfoFromRow(row: Row) = {
+    row match {
+      case Row(id: Int) => Ok(getPokemonInfoFromId(id))
+    }
+  }
+
+  private def getPokemonInfoFromId(pokemon_id: Int) = {
+    val statRecords: List[StatRecordInfo] = DB.withConnection { implicit c => 
+      SQL("""SELECT tiers.name,generations.number,months.number,years.number,tier_ratings.rating,stat_records.id
+             FROM stat_records 
+             INNER JOIN tier_ratings ON stat_records.tier_rating_id = tier_ratings.id
+             INNER JOIN tier_months ON tier_ratings.tier_month_id = tier_months.id 
+             INNER JOIN months ON tier_months.month_id = months.id
+             INNER JOIN years ON months.year_id = years.id
+             INNER JOIN tiers ON tier_months.tier_id = tiers.id
+             INNER JOIN generations ON tiers.generation_id = generations.id
+             WHERE stat_records.pokemon_id="""+pokemon_id
+      )().toList.map {
+        case Row(tier: String, generation: Byte, month: Short, year: Short, rating: Int, stat_record_id: Int) => {
+          new StatRecordInfo(generation, tier, rating, year, month, stat_record_id)
         }
       }
-      case None => 0
     }
-    Ok(Json.toJson(usageHash))
+
+    Json.toJson(
+      statRecords.groupBy(statRecord => statRecord.generation.toString).mapValues ( genStatRecords => 
+        Json.toJson(
+          genStatRecords.groupBy(genStatRecord => genStatRecord.tier).mapValues( tierStatRecords => 
+            Json.toJson(
+              tierStatRecords.groupBy(tierStatRecord => tierStatRecord.rating.toString).mapValues( ratingStatRecords => 
+                Json.toJson(
+                  ratingStatRecords.map(monthStatRecord => monthStatRecord.month + "/" + monthStatRecord.year -> getInfoForStatRecord(monthStatRecord)).toMap
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+
   }
 
-  def all(tier: String) = Action {
-    val allPokemon = allFiles(tier).values.flatten.map {
-      case array: JsArray => array(1) match {
-        case string: JsString => string.value
+  private def getInfoForStatRecord(statRecord: StatRecordInfo) = {
+    JsObject(
+      "usage"     -> generateUsage(statRecord.statRecordId)              ::
+      "abilities" -> getAbilitiesFromStatRecord(statRecord.statRecordId) ::
+      "moves"     -> getMovesFromStatRecord(statRecord.statRecordId)     ::
+      "items"     -> getItemsFromStatRecord(statRecord.statRecordId)     ::
+      "teammates" -> getTeammatesFromStatRecord(statRecord.statRecordId) ::
+      "spreads"   -> getSpreadsFromStatRecord(statRecord.statRecordId)   ::
+      Nil
+    )
+  }
+
+  private def getAbilitiesFromStatRecord(statRecordId: Int) = {
+    Json.toJson(
+      DB.withConnection { implicit c => 
+        SQL("""SELECT abilities.name,ability_records.number
+               FROM ability_records
+               INNER JOIN abilities ON ability_records.ability_id = abilities.id
+               WHERE ability_records.stat_record_id="""+statRecordId
+        )().toList.map {
+          case Row(ability: String, value: Double) => {
+            ability -> JsNumber(value)
+          }
+        }.toMap
       }
-    }.toList.distinct
-    Ok(Json.toJson(allPokemon))
+    )
   }
 
-  def allNew(generation: String, tier: String, year: String, month: String, rating: String) = Action {
-    val parsedJson = getChaosStructure(generation, tier, year, month, rating)
-    val pokemonJson = parsedJson \ "data"
-    val pokemonData = pokemonJson match {
-      case obj: JsObject => obj.value
+  private def getMovesFromStatRecord(statRecordId: Int) = {
+    Json.toJson(
+      DB.withConnection { implicit c =>
+        SQL("""SELECT moves.name,move_records.number
+               FROM move_records
+               INNER JOIN moves ON move_records.move_id = moves.id
+               WHERE move_records.stat_record_id="""+statRecordId
+        )().toList.map {
+          case Row(move: String, value: Double) => {
+            move -> JsNumber(value)
+          }
+        }.toMap
+      }
+    )
+  }
+
+  private def getItemsFromStatRecord(statRecordId: Int) = {
+    Json.toJson(
+      DB.withConnection { implicit c =>
+        SQL("""SELECT items.name,item_records.number
+               FROM item_records
+               INNER JOIN items ON item_records.item_id = items.id
+               WHERE item_records.stat_record_id="""+statRecordId
+        )().toList.map {
+          case Row(item: String, value: Double) => {
+            item -> JsNumber(value)
+          }
+        }.toMap
+      }
+    )
+  }
+
+  private def getTeammatesFromStatRecord(statRecordId: Int) = {
+    Json.toJson(
+      DB.withConnection { implicit c =>
+        SQL("""SELECT pokemon.name,teammate_records.number
+               FROM teammate_records
+               INNER JOIN pokemon ON teammate_records.pokemon_id = pokemon.id
+               WHERE teammate_records.stat_record_id="""+statRecordId
+        )().toList.map {
+          case Row(pokemon: String, value: Double) => {
+            pokemon -> JsNumber(value)
+          }
+        }.toMap
+      }
+    )
+  }
+
+  private def getSpreadsFromStatRecord(statRecordId: Int) = {
+    Json.toJson(
+      DB.withConnection { implicit c =>
+        SQL("""SELECT natures.name,ev_spreads.hp,ev_spreads.attack,ev_spreads.defence,ev_spreads.spa,ev_spreads.spd,ev_spreads.speed,spread_records.number
+               FROM spread_records
+               INNER JOIN natures on spread_records.nature_id = natures.id
+               INNER JOIN ev_spreads on spread_records.ev_spread_id = ev_spreads.id
+               WHERE spread_records.stat_record_id="""+statRecordId
+        )().toList.map {
+          case Row(nature: String, hp: Short, att: Short, defence: Short, spa: Short, spd: Short, spe: Short, value: Double) => {
+            nature + ":" + hp + "/" + att + "/" + defence + "/" + spa + "/" + spd + "/" + spe + "/" -> JsNumber(value)
+          }
+        }.toMap
+      }
+    )
+  }
+
+  private def generateUsage(statRecordId: Int) = {
+    DB.withConnection { implicit c =>
+      SQL("""SELECT tier_ratings.no_of_battles,stat_records.raw_usage
+             FROM stat_records
+             INNER JOIN tier_ratings on stat_records.tier_rating_id = tier_ratings.id
+             WHERE stat_records.id="""+statRecordId
+      )().toList match {
+        case row :: Nil => {
+          row match {
+            case Row(noBattles: Int, rawCount: Int) => {
+              JsNumber(100 * (rawCount.toFloat / (12 * noBattles.toFloat)))
+            }
+          }
+        }
+        case _ => Resource.errorStructure(List("Incorrect number of Rows"))
+      }
     }
-    val usageOnly = pokemonData.mapValues {
-      case obj: JsObject => (obj \ "Raw count") match {
-        case num: JsNumber => num.value
-      } 
-    }
-    val array = usageOnly.toArray
-    val sortedArray = array.sortWith((tuple1, tuple2) => {
-      tuple1._2 > tuple2._2
-    }).map(_._1)
-    Ok(Json.toJson(sortedArray))
   }
-
-  def teammates(pokemon: String, generation: String, tier: String, year: String, month: String, rating: String) = Action {
-    val parsedJson = getChaosStructure(generation, tier, year, month, rating)
-    val teammatesJson = parsedJson \ "data" \ pokemon \ "Teammates"
-    val teammates = teammatesJson match {
-      case obj: JsObject => obj.value
-    }
-    val map = teammates.mapValues({
-      case num: JsNumber => num.value
-    })
-    val array = map.toArray
-    val sortedArray = array.sortWith((tuple1, tuple2) => {
-      tuple1._2.abs > tuple2._2.abs
-    }).map(tuple => tuple._1)
-    Ok(Json.toJson(sortedArray))
-  }
-
-  private def getChaosStructure(generation: String, tier: String, year: String, month: String, rating: String) = {
-    val projectRoot = Play.application.path.getAbsolutePath
-    val file = new File(projectRoot+"/data/chaos/"+generation+"/"+tier+"/"+year+"/"+month+"/"+rating+".json")
-    val fileAsString = Source.fromFile(file.getAbsolutePath).mkString
-    Json.parse(fileAsString)
-  }
-
-  private def allFiles(tier: String): Map[String, List[JsValue]] = {
-    val projectRoot = Play.application.path.getAbsolutePath
-    val statFiles = new File(projectRoot + "/old/data/"+tier+"/usage").listFiles
-    val statFileHash = statFiles.map (file => file.getName.split('.').head -> file).toMap
-    val statStringHash = statFileHash.mapValues(file => Source.fromFile(file.getAbsolutePath).mkString)
-    val statJsonHash = statStringHash.mapValues(string => Json.parse(string))
-    statJsonHash.mapValues(jsValue => jsValue.as[List[JsValue]])
-  }
-
 }

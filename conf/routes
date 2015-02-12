@@ -2,6 +2,12 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
+# More useful - stats focused API
+GET     /api/pokemon/:pokemon               controllers.Pokemon.get(pokemon: String)
+GET     /api/pokemon                        controllers.Pokemon.query(generation: Int)
+
+# All the REST resources are below
+
 # Generation as a resource
 POST    /api/generations            controllers.Generation.create
 GET     /api/generations            controllers.Generation.getWithParams
