@@ -12,16 +12,18 @@ object TierRating extends REST {
 
   val parameters: Map[String, (String, String) => ValidationResult] = Map(
     "rating"        -> validateInt,
+    "no_of_battles" -> validateInt,
     "tier_month_id" -> validateInt
   )
 
   protected def single(row: Row): JsValue = {
     row match {
-      case Row(id: Int, rating: Int, tier_month_id: Int) => {
+      case Row(id: Int, noBattles: Int, rating: Int, tierMonthId: Int) => {
         JsObject(
           "id"            -> JsNumber(id) ::
+          "no_of_battles" -> JsNumber(noBattles) ::
           "rating"        -> JsNumber(rating) ::
-          "tier_month_id" -> JsNumber(tier_month_id) ::
+          "tier_month_id" -> JsNumber(tierMonthId) ::
           Nil
         )
       }

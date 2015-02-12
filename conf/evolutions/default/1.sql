@@ -100,6 +100,7 @@ CREATE TABLE tier_months(
 
 CREATE TABLE tier_ratings(
   id            INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  no_of_battles INT UNSIGNED NOT NULL,
 
   rating        INT UNSIGNED NOT NULL,
   tier_month_id INT UNSIGNED NOT NULL,
@@ -111,6 +112,7 @@ CREATE TABLE tier_ratings(
 
 CREATE TABLE stat_records(
   id             INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  raw_usage      INT UNSIGNED NOT NULL,
 
   pokemon_id     INT UNSIGNED NOT NULL,
   tier_rating_id INT UNSIGNED NOT NULL,

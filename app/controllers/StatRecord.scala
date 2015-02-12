@@ -11,15 +11,17 @@ object StatRecord extends REST {
   val tableName: String = "stat_records"
 
   val parameters: Map[String, (String, String) => ValidationResult] = Map(
+    "raw_usage"      -> validateInt,
     "pokemon_id"     -> validateInt,
     "tier_rating_id" -> validateInt
   )
 
   protected def single(row: Row): JsValue = {
     row match {
-      case Row(id: Int, pokemon_id: Int, tier_rating_id: Int) => {
+      case Row(id: Int, rawUsage: Int, pokemon_id: Int, tier_rating_id: Int) => {
         JsObject(
           "id"             -> JsNumber(id) ::
+          "raw_usage"      -> JsNumber(rawUsage) ::
           "pokemon_id"     -> JsNumber(pokemon_id) ::
           "tier_rating_id" -> JsNumber(tier_rating_id) ::
           Nil
