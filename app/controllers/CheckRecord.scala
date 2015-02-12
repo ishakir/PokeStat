@@ -4,7 +4,6 @@ import anorm.Row
 
 import play.api.libs.json.JsNumber
 import play.api.libs.json.JsObject
-import play.api.libs.json.JsString
 import play.api.libs.json.JsValue
 
 object CheckRecord extends REST {
