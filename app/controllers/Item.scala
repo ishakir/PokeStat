@@ -17,7 +17,7 @@ object Item extends REST {
 
   protected def single(row: Row): JsValue = {
     row match {
-      case Row(id: Int, name: String) => {
+      case Row(id: Long, name: String) => {
         JsObject(
           "id"   -> JsNumber(id) ::
           "name" -> JsString(name) ::

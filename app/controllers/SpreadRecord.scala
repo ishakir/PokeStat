@@ -19,7 +19,7 @@ object SpreadRecord extends REST {
 
   protected def single(row: Row): JsValue = {
     row match {
-      case Row(id: Int, number: Double, ev_spread_id: Int, nature_id: Int, stat_record_id: Int) => {
+      case Row(id: Long, number: Double, ev_spread_id: Int, nature_id: Int, stat_record_id: Int) => {
         JsObject(
           "id"             -> JsNumber(id) ::
           "number"         -> JsNumber(number) ::

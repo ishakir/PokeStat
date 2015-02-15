@@ -16,7 +16,7 @@ object Year extends REST {
 
   protected def single(generationRow: Row): JsValue = {
     generationRow match {
-      case Row(id: Int, number: Short) => {
+      case Row(id: Long, number: Int) => {
         JsObject(
           "id" -> JsNumber(id) ::
           "number" -> JsNumber(number) ::

@@ -18,7 +18,7 @@ object TierRating extends REST {
 
   protected def single(row: Row): JsValue = {
     row match {
-      case Row(id: Int, noBattles: Int, rating: Int, tierMonthId: Int) => {
+      case Row(id: Long, noBattles: Int, rating: Int, tierMonthId: Int) => {
         JsObject(
           "id"            -> JsNumber(id) ::
           "no_of_battles" -> JsNumber(noBattles) ::

@@ -18,7 +18,7 @@ object Tier extends REST {
 
   protected def single(row: Row): JsValue = {
     row match {
-      case Row(id: Int, name: String, generation_id: Int) => {
+      case Row(id: Long, name: String, generation_id: Int) => {
         JsObject(
           "id" -> JsNumber(id) ::
           "name" -> JsString(name) ::

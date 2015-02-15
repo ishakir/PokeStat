@@ -16,14 +16,14 @@ object Generation extends REST {
 
   protected def single(row: Row): JsValue = {
     row match {
-      case Row(id: Int, number: Byte) => {
+      case Row(id: Long, number: Int) => {
         JsObject(
           "id"     -> JsNumber(id) ::
           "number" -> JsNumber(number) ::
           Nil
         )
       }
-      case _ => throw new IllegalArgumentException("Row provided is invalid!")
+      case _ => throw new IllegalArgumentException("Row provided is invalid!" + row)
     }
   }
 

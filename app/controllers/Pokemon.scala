@@ -17,12 +17,12 @@ import play.api.Play.current
 import utils.Resource
 
 class StatRecordInfo(
-  val generation: Byte,
+  val generation: Int,
   val tier: String, 
   val rating: Int, 
-  val year: Short, 
-  val month: Short, 
-  val statRecordId: Int
+  val year: Int, 
+  val month: Int, 
+  val statRecordId: Long
 )
 
 object Pokemon extends Controller {
@@ -59,11 +59,11 @@ object Pokemon extends Controller {
 
   private def getPokemonInfoFromRow(row: Row) = {
     row match {
-      case Row(id: Int) => Ok(getPokemonInfoFromId(id))
+      case Row(id: Long) => Ok(getPokemonInfoFromId(id))
     }
   }
 
-  private def getPokemonInfoFromId(pokemon_id: Int) = {
+  private def getPokemonInfoFromId(pokemon_id: Long) = {
     val statRecords: List[StatRecordInfo] = DB.withConnection { implicit c => 
       SQL("""SELECT tiers.name,generations.number,months.number,years.number,tier_ratings.rating,stat_records.id
              FROM stat_records 
@@ -75,7 +75,7 @@ object Pokemon extends Controller {
              INNER JOIN generations ON tiers.generation_id = generations.id
              WHERE stat_records.pokemon_id="""+pokemon_id
       )().toList.map {
-        case Row(tier: String, generation: Byte, month: Short, year: Short, rating: Int, stat_record_id: Int) => {
+        case Row(tier: String, generation: Int, month: Int, year: Int, rating: Int, stat_record_id: Long) => {
           new StatRecordInfo(generation, tier, rating, year, month, stat_record_id)
         }
       }
@@ -111,7 +111,7 @@ object Pokemon extends Controller {
     )
   }
 
-  private def getAbilitiesFromStatRecord(statRecordId: Int) = {
+  private def getAbilitiesFromStatRecord(statRecordId: Long) = {
     Json.toJson(
       DB.withConnection { implicit c => 
         SQL("""SELECT abilities.name,ability_records.number
@@ -127,7 +127,7 @@ object Pokemon extends Controller {
     )
   }
 
-  private def getMovesFromStatRecord(statRecordId: Int) = {
+  private def getMovesFromStatRecord(statRecordId: Long) = {
     Json.toJson(
       DB.withConnection { implicit c =>
         SQL("""SELECT moves.name,move_records.number
@@ -143,7 +143,7 @@ object Pokemon extends Controller {
     )
   }
 
-  private def getItemsFromStatRecord(statRecordId: Int) = {
+  private def getItemsFromStatRecord(statRecordId: Long) = {
     Json.toJson(
       DB.withConnection { implicit c =>
         SQL("""SELECT items.name,item_records.number
@@ -159,7 +159,7 @@ object Pokemon extends Controller {
     )
   }
 
-  private def getTeammatesFromStatRecord(statRecordId: Int) = {
+  private def getTeammatesFromStatRecord(statRecordId: Long) = {
     Json.toJson(
       DB.withConnection { implicit c =>
         SQL("""SELECT pokemon.name,teammate_records.number
@@ -175,7 +175,7 @@ object Pokemon extends Controller {
     )
   }
 
-  private def getSpreadsFromStatRecord(statRecordId: Int) = {
+  private def getSpreadsFromStatRecord(statRecordId: Long) = {
     Json.toJson(
       DB.withConnection { implicit c =>
         SQL("""SELECT natures.name,ev_spreads.hp,ev_spreads.attack,ev_spreads.defence,ev_spreads.spa,ev_spreads.spd,ev_spreads.speed,spread_records.number
@@ -184,7 +184,7 @@ object Pokemon extends Controller {
                INNER JOIN ev_spreads on spread_records.ev_spread_id = ev_spreads.id
                WHERE spread_records.stat_record_id="""+statRecordId
         )().toList.map {
-          case Row(nature: String, hp: Short, att: Short, defence: Short, spa: Short, spd: Short, spe: Short, value: Double) => {
+          case Row(nature: String, hp: Int, att: Int, defence: Int, spa: Int, spd: Int, spe: Int, value: Double) => {
             nature + ":" + hp + "/" + att + "/" + defence + "/" + spa + "/" + spd + "/" + spe + "/" -> JsNumber(value)
           }
         }.toMap
@@ -192,7 +192,7 @@ object Pokemon extends Controller {
     )
   }
 
-  private def generateUsage(statRecordId: Int) = {
+  private def generateUsage(statRecordId: Long) = {
     DB.withConnection { implicit c =>
       SQL("""SELECT tier_ratings.no_of_battles,stat_records.raw_usage
              FROM stat_records
