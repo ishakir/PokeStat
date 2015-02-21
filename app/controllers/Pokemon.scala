@@ -11,10 +11,21 @@ import play.api.libs.json.JsNull
 import play.api.libs.json.JsObject
 import play.api.libs.json.JsString
 import play.api.mvc.Action
+import play.api.mvc.AnyContent
 import play.api.mvc.Controller
+import play.api.mvc.Request
+import play.api.mvc.Result
 import play.api.Play.current
 
 import utils.Resource
+
+object CORSAction {
+  def apply(block: Request[AnyContent] => Result): Action[AnyContent] = (
+    Action { request =>
+      block(request).withHeaders("Access-Control-Allow-Origin" -> "*")
+    }
+  )
+}
 
 class StatRecordInfo(
   val generation: Int,
@@ -27,7 +38,7 @@ class StatRecordInfo(
 
 object Pokemon extends Controller {
 
-  def get(pokemon: String) = Action { request =>
+  def get(pokemon: String) = CORSAction { request =>
     DB.withConnection { implicit c =>
       SQL("SELECT id from pokemon where name='"+pokemon+"';")().toList match {
         case Nil => NotFound(Resource.errorStructure(List("No pokemon named '"+pokemon+"' found!")))
@@ -37,7 +48,7 @@ object Pokemon extends Controller {
     }
   }
 
-  def query(generation: Int) = Action { request =>
+  def query(generation: Int) = CORSAction { request =>
     Ok(
       Json.toJson(
         DB.withConnection { implicit c =>
