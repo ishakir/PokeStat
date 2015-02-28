@@ -107,7 +107,7 @@ CREATE TABLE tier_ratings(
 
   PRIMARY KEY (id),
 
-  FOREIGN KEY (tier_month_id) REFERENCES tier_ratings(id)
+  FOREIGN KEY (tier_month_id) REFERENCES tier_months(id)
 );
 
 CREATE TABLE stat_records(
