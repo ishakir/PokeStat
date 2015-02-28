@@ -52,7 +52,7 @@ object Pokemon extends Controller {
     Ok(
       Json.toJson(
         DB.withConnection { implicit c =>
-          SQL("""SELECT pokemon.name
+          SQL("""SELECT DISTINCT pokemon.name
                  FROM stat_records
                  INNER JOIN tier_ratings ON stat_records.tier_rating_id = tier_ratings.id
                  INNER JOIN tier_months ON tier_ratings.tier_month_id = tier_months.id
