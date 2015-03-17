@@ -12,5 +12,3 @@ libraryDependencies ++= Seq(
   cache,
   ws
 )
-
-javaHome := Some(file("/usr/lib/jvm/java-6-openjdk"))
