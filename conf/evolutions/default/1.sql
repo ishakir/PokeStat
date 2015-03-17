@@ -137,11 +137,13 @@ CREATE TABLE ability_records(
 );
 
 CREATE TABLE check_records(
-  id             LONG  UNSIGNED NOT NULL AUTO_INCREMENT,
-  number         FLOAT          NOT NULL,
+  id                      LONG  UNSIGNED NOT NULL AUTO_INCREMENT,
+  matchup_occurences      INT   UNSIGNED NOT NULL,
+  kos_or_switches_caused  FLOAT          NOT NULL,
+  kos_or_switches_stddev  FLOAT          NOT NULL,
 
-  pokemon_id     INT   UNSIGNED NOT NULL,
-  stat_record_id INT   UNSIGNED NOT NULL,
+  pokemon_id              INT   UNSIGNED NOT NULL,
+  stat_record_id          INT   UNSIGNED NOT NULL,
 
   PRIMARY KEY (id),
 
