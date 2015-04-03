@@ -3,21 +3,21 @@
 # --- !Ups
 
 CREATE TABLE abilities(
-  id   LONG         UNSIGNED NOT NULL AUTO_INCREMENT,
+  id   INT          UNSIGNED NOT NULL AUTO_INCREMENT,
   name VARCHAR(255)          NOT NULL,
 
   PRIMARY KEY (id)
 );
 
 CREATE TABLE natures(
-  id   LONG         UNSIGNED NOT NULL AUTO_INCREMENT,
+  id   INT          UNSIGNED NOT NULL AUTO_INCREMENT,
   name VARCHAR(255)          NOT NULL,
 
   PRIMARY KEY (id)
 );
 
 CREATE TABLE ev_spreads(
-  id      LONG    UNSIGNED NOT NULL AUTO_INCREMENT,
+  id      INT     UNSIGNED NOT NULL AUTO_INCREMENT,
   hp      INT     UNSIGNED NOT NULL,
   attack  INT     UNSIGNED NOT NULL,
   defence INT     UNSIGNED NOT NULL,
@@ -29,34 +29,34 @@ CREATE TABLE ev_spreads(
 );
 
 CREATE TABLE moves(
-  id   LONG         UNSIGNED NOT NULL AUTO_INCREMENT,
+  id   INT          UNSIGNED NOT NULL AUTO_INCREMENT,
   name VARCHAR(255)          NOT NULL,
 
   PRIMARY KEY (id)
 );
 CREATE TABLE items(
-  id   LONG         UNSIGNED NOT NULL AUTO_INCREMENT,
+  id   INT          UNSIGNED NOT NULL AUTO_INCREMENT,
   name VARCHAR(255)          NOT NULL,
 
   PRIMARY KEY (id)
 );
 
 CREATE TABLE pokemon(
-  id   LONG         UNSIGNED NOT NULL AUTO_INCREMENT,
+  id   INT          UNSIGNED NOT NULL AUTO_INCREMENT,
   name VARCHAR(255)          NOT NULL,
 
   PRIMARY KEY (id)
 );
 
 CREATE TABLE generations(
-  id     LONG    UNSIGNED NOT NULL AUTO_INCREMENT,
+  id     INT     UNSIGNED NOT NULL AUTO_INCREMENT,
   number INT     UNSIGNED NOT NULL UNIQUE,
 
   PRIMARY KEY (id)
 );
 
 CREATE TABLE tiers(
-  id            LONG         UNSIGNED NOT NULL AUTO_INCREMENT,
+  id            INT          UNSIGNED NOT NULL AUTO_INCREMENT,
   name          VARCHAR(255)          NOT NULL,
 
   generation_id INT          UNSIGNED NOT NULL,
@@ -69,14 +69,14 @@ CREATE TABLE tiers(
 );
 
 CREATE TABLE years(
-  id     LONG     UNSIGNED NOT NULL AUTO_INCREMENT,
+  id     INT      UNSIGNED NOT NULL AUTO_INCREMENT,
   number INT      UNSIGNED NOT NULL,
 
   PRIMARY KEY (id)
 );
 
 CREATE TABLE months(
-  id      LONG         UNSIGNED NOT NULL AUTO_INCREMENT,
+  id      INT          UNSIGNED NOT NULL AUTO_INCREMENT,
   number  INT          UNSIGNED NOT NULL,
 
   year_id INT          UNSIGNED NOT NULL,
@@ -87,7 +87,7 @@ CREATE TABLE months(
 );
 
 CREATE TABLE tier_months(
-  id       LONG UNSIGNED NOT NULL AUTO_INCREMENT,
+  id       INT UNSIGNED NOT NULL AUTO_INCREMENT,
 
   month_id INT  UNSIGNED NOT NULL,
   tier_id  INT  UNSIGNED NOT NULL,
@@ -99,7 +99,7 @@ CREATE TABLE tier_months(
 );
 
 CREATE TABLE tier_ratings(
-  id            LONG UNSIGNED NOT NULL AUTO_INCREMENT,
+  id            INT UNSIGNED NOT NULL AUTO_INCREMENT,
   no_of_battles INT  UNSIGNED NOT NULL,
 
   rating        INT  UNSIGNED NOT NULL,
@@ -111,7 +111,7 @@ CREATE TABLE tier_ratings(
 );
 
 CREATE TABLE stat_records(
-  id             LONG UNSIGNED NOT NULL AUTO_INCREMENT,
+  id             INT  UNSIGNED NOT NULL AUTO_INCREMENT,
   raw_usage      INT  UNSIGNED NOT NULL,
 
   pokemon_id     INT  UNSIGNED NOT NULL,
@@ -124,7 +124,7 @@ CREATE TABLE stat_records(
 );
 
 CREATE TABLE ability_records(
-  id             LONG   UNSIGNED NOT NULL AUTO_INCREMENT,
+  id             INT    UNSIGNED NOT NULL AUTO_INCREMENT,
   number         FLOAT           NOT NULL,
 
   ability_id     INT    UNSIGNED NOT NULL,
@@ -137,7 +137,7 @@ CREATE TABLE ability_records(
 );
 
 CREATE TABLE check_records(
-  id                      LONG  UNSIGNED NOT NULL AUTO_INCREMENT,
+  id                      INT   UNSIGNED NOT NULL AUTO_INCREMENT,
   matchup_occurences      INT   UNSIGNED NOT NULL,
   kos_or_switches_caused  FLOAT          NOT NULL,
   kos_or_switches_stddev  FLOAT          NOT NULL,
@@ -152,7 +152,7 @@ CREATE TABLE check_records(
 );
 
 CREATE TABLE item_records(
-  id             LONG  UNSIGNED NOT NULL AUTO_INCREMENT,
+  id             INT   UNSIGNED NOT NULL AUTO_INCREMENT,
   number         FLOAT          NOT NULL,
 
   item_id        INT   UNSIGNED NOT NULL,
@@ -165,7 +165,7 @@ CREATE TABLE item_records(
 );
 
 CREATE TABLE lead_records(
-  id             LONG  UNSIGNED NOT NULL AUTO_INCREMENT,
+  id             INT   UNSIGNED NOT NULL AUTO_INCREMENT,
   number         FLOAT          NOT NULL,
 
   stat_record_id INT   UNSIGNED NOT NULL,
@@ -176,7 +176,7 @@ CREATE TABLE lead_records(
 );
 
 CREATE TABLE move_records(
-  id             LONG  UNSIGNED NOT NULL AUTO_INCREMENT,
+  id             INT   UNSIGNED NOT NULL AUTO_INCREMENT,
   number         FLOAT          NOT NULL,
 
   move_id        INT   UNSIGNED NOT NULL,
@@ -189,8 +189,8 @@ CREATE TABLE move_records(
 );
 
 CREATE TABLE spread_records(
-  id             LONG  UNSIGNED NOT NULL AUTO_INCREMENT,
-  number         FLOAT        NOT NULL,
+  id             INT   UNSIGNED NOT NULL AUTO_INCREMENT,
+  number         FLOAT          NOT NULL,
 
   ev_spread_id   INT   UNSIGNED NOT NULL,
   nature_id      INT   UNSIGNED NOT NULL,
@@ -204,7 +204,7 @@ CREATE TABLE spread_records(
 );
 
 CREATE TABLE teammate_records(
-  id     LONG        UNSIGNED NOT NULL AUTO_INCREMENT,
+  id     INT         UNSIGNED NOT NULL AUTO_INCREMENT,
   number FLOAT                NOT NULL,
 
   pokemon_id     INT UNSIGNED NOT NULL,
