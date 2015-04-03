@@ -20,7 +20,7 @@ object CheckRecord extends REST {
 
   protected def single(row: Row): JsValue = {
     row match {
-      case Row(id: Long, matchup_occurences: Int, kos_or_switches_caused: Double, kos_or_switches_stddev: Double, pokemon_id: Int, stat_record_id: Int) => {
+      case Row(id: Long, matchup_occurences: Long, kos_or_switches_caused: Float, kos_or_switches_stddev: Float, pokemon_id: Long, stat_record_id: Long) => {
         JsObject(
           "id"                     -> JsNumber(id) ::
           "matchup_occurences"     -> JsNumber(matchup_occurences) ::

@@ -17,7 +17,7 @@ object Month extends REST {
 
   protected def single(row: Row): JsValue = {
     row match {
-      case Row(id: Long, number: Int, year_id: Int) => {
+      case Row(id: Long, number: Long, year_id: Long) => {
         JsObject(
           "id"      -> JsNumber(id) ::
           "number"  -> JsNumber(number) ::

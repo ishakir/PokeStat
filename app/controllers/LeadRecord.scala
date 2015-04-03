@@ -17,7 +17,7 @@ object LeadRecord extends REST {
 
   protected def single(row: Row): JsValue = {
     row match {
-      case Row(id: Long, number: Double, stat_record_id: Int) => {
+      case Row(id: Long, number: Float, stat_record_id: Long) => {
         JsObject(
           "id"             -> JsNumber(id) ::
           "number"         -> JsNumber(number) ::

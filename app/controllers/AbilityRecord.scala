@@ -18,7 +18,7 @@ object AbilityRecord extends REST {
 
   protected def single(row: Row): JsValue = {
     row match {
-      case Row(id: Long, number: Double, ability_id: Int, stat_record_id: Int) => {
+      case Row(id: Long, number: Float, ability_id: Long, stat_record_id: Long) => {
         JsObject(
           "id"             -> JsNumber(id) ::
           "number"         -> JsNumber(number) ::

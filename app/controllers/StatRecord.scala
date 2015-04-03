@@ -18,7 +18,7 @@ object StatRecord extends REST {
 
   protected def single(row: Row): JsValue = {
     row match {
-      case Row(id: Long, rawUsage: Int, pokemon_id: Int, tier_rating_id: Int) => {
+      case Row(id: Long, rawUsage: Long, pokemon_id: Long, tier_rating_id: Long) => {
         JsObject(
           "id"             -> JsNumber(id) ::
           "raw_usage"      -> JsNumber(rawUsage) ::
