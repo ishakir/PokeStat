@@ -10,31 +10,12 @@ import play.api.libs.json.JsNumber
 import play.api.libs.json.JsNull
 import play.api.libs.json.JsObject
 import play.api.libs.json.JsString
-import play.api.mvc.Action
-import play.api.mvc.AnyContent
 import play.api.mvc.Controller
-import play.api.mvc.Request
-import play.api.mvc.Result
 import play.api.Play.current
 
 import utils.Resource
-
-object CORSAction {
-  def apply(block: Request[AnyContent] => Result): Action[AnyContent] = (
-    Action { request =>
-      block(request).withHeaders("Access-Control-Allow-Origin" -> "*")
-    }
-  )
-}
-
-class StatRecordInfo(
-  val generation: Int,
-  val tier: String, 
-  val rating: Int, 
-  val year: Int, 
-  val month: Int, 
-  val statRecordId: Long
-)
+import utils.controllers.CORSAction
+import utils.controllers.StatRecordInfo
 
 object Pokemon extends Controller {
 
@@ -86,27 +67,13 @@ object Pokemon extends Controller {
              INNER JOIN generations ON tiers.generation_id = generations.id
              WHERE stat_records.pokemon_id="""+pokemon_id
       )().toList.map {
-        case Row(tier: String, generation: Int, month: Int, year: Int, rating: Int, stat_record_id: Long) => {
+        case Row(tier: String, generation: Long, month: Long, year: Long, rating: Long, stat_record_id: Long) => {
           new StatRecordInfo(generation, tier, rating, year, month, stat_record_id)
         }
       }
     }
 
-    Json.toJson(
-      statRecords.groupBy(statRecord => statRecord.generation.toString).mapValues ( genStatRecords => 
-        Json.toJson(
-          genStatRecords.groupBy(genStatRecord => genStatRecord.tier).mapValues( tierStatRecords => 
-            Json.toJson(
-              tierStatRecords.groupBy(tierStatRecord => tierStatRecord.rating.toString).mapValues( ratingStatRecords => 
-                Json.toJson(
-                  ratingStatRecords.map(monthStatRecord => monthStatRecord.month + "/" + monthStatRecord.year -> getInfoForStatRecord(monthStatRecord)).toMap
-                )
-              )
-            )
-          )
-        )
-      )
-    )
+    Resource.tierMonthsInfosToJson(statRecords, Some(getInfoForStatRecord _))
 
   }
 
@@ -130,7 +97,7 @@ object Pokemon extends Controller {
                INNER JOIN abilities ON ability_records.ability_id = abilities.id
                WHERE ability_records.stat_record_id="""+statRecordId
         )().toList.map {
-          case Row(ability: String, value: Double) => {
+          case Row(ability: String, value: Float) => {
             ability -> JsNumber(value)
           }
         }.toMap
@@ -146,7 +113,7 @@ object Pokemon extends Controller {
                INNER JOIN moves ON move_records.move_id = moves.id
                WHERE move_records.stat_record_id="""+statRecordId
         )().toList.map {
-          case Row(move: String, value: Double) => {
+          case Row(move: String, value: Float) => {
             move -> JsNumber(value)
           }
         }.toMap
@@ -162,7 +129,7 @@ object Pokemon extends Controller {
                INNER JOIN items ON item_records.item_id = items.id
                WHERE item_records.stat_record_id="""+statRecordId
         )().toList.map {
-          case Row(item: String, value: Double) => {
+          case Row(item: String, value: Float) => {
             item -> JsNumber(value)
           }
         }.toMap
@@ -178,7 +145,7 @@ object Pokemon extends Controller {
                INNER JOIN pokemon ON teammate_records.pokemon_id = pokemon.id
                WHERE teammate_records.stat_record_id="""+statRecordId
         )().toList.map {
-          case Row(pokemon: String, value: Double) => {
+          case Row(pokemon: String, value: Float) => {
             pokemon -> JsNumber(value)
           }
         }.toMap
@@ -195,7 +162,7 @@ object Pokemon extends Controller {
                INNER JOIN ev_spreads on spread_records.ev_spread_id = ev_spreads.id
                WHERE spread_records.stat_record_id="""+statRecordId
         )().toList.map {
-          case Row(nature: String, hp: Int, att: Int, defence: Int, spa: Int, spd: Int, spe: Int, value: Double) => {
+          case Row(nature: String, hp: Long, att: Long, defence: Long, spa: Long, spd: Long, spe: Long, value: Float) => {
             nature + ":" + hp + "/" + att + "/" + defence + "/" + spa + "/" + spd + "/" + spe + "/" -> JsNumber(value)
           }
         }.toMap
@@ -212,7 +179,7 @@ object Pokemon extends Controller {
       )().toList match {
         case row :: Nil => {
           row match {
-            case Row(noBattles: Int, rawCount: Int) => {
+            case Row(noBattles: Long, rawCount: Long) => {
               JsNumber(100 * (rawCount.toFloat / (12 * noBattles.toFloat)))
             }
           }

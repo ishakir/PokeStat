@@ -5,6 +5,7 @@
 # More useful - stats focused API
 GET     /api/pokemon/:pokemon               controllers.Pokemon.get(pokemon: String)
 GET     /api/pokemon                        controllers.Pokemon.query(generation: Int)
+GET     /api/tier                           controllers.Metadata.get()
 
 # All the REST resources are below
 
