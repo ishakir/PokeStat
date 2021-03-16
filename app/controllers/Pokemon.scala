@@ -1,21 +1,12 @@
 package controllers
 
-import anorm.Row
-import anorm.SQL
-
-import play.api.db.DB
-import play.api.libs.json.Json
-import play.api.libs.json.JsArray
-import play.api.libs.json.JsNumber
-import play.api.libs.json.JsNull
-import play.api.libs.json.JsObject
-import play.api.libs.json.JsString
-import play.api.mvc.Controller
+import anorm.{Row, SQL}
 import play.api.Play.current
-
+import play.api.db.DB
+import play.api.libs.json.{JsNumber, JsObject, Json}
+import play.api.mvc.Controller
 import utils.Resource
-import utils.controllers.CORSAction
-import utils.controllers.StatRecordInfo
+import utils.controllers.{CORSAction, StatRecordInfo}
 
 object Pokemon extends Controller {
 
@@ -57,7 +48,7 @@ object Pokemon extends Controller {
 
   private def getPokemonInfoFromId(pokemon_id: Long) = {
     val statRecords: List[StatRecordInfo] = DB.withConnection { implicit c => 
-      SQL("""SELECT tiers.name,generations.number,months.number,years.number,tier_ratings.rating,stat_records.id
+      SQL(s"""SELECT tiers.name,generations.number,months.number,years.number,tier_ratings.rating,stat_records.id
              FROM stat_records 
              INNER JOIN tier_ratings ON stat_records.tier_rating_id = tier_ratings.id
              INNER JOIN tier_months ON tier_ratings.tier_month_id = tier_months.id 
@@ -65,7 +56,8 @@ object Pokemon extends Controller {
              INNER JOIN years ON months.year_id = years.id
              INNER JOIN tiers ON tier_months.tier_id = tiers.id
              INNER JOIN generations ON tiers.generation_id = generations.id
-             WHERE stat_records.pokemon_id="""+pokemon_id
+             WHERE stat_records.pokemon_id=$pokemon_id
+             ORDER BY years.number ASC, months.number ASC"""
       )().toList.map {
         case Row(tier: String, generation: Long, month: Long, year: Long, rating: Long, stat_record_id: Long) => {
           new StatRecordInfo(generation, tier, rating, year, month, stat_record_id)

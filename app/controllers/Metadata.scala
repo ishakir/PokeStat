@@ -1,15 +1,11 @@
 package controllers
 
-import anorm.Row
-import anorm.SQL
-
+import anorm.{Row, SQL}
+import play.api.Play.current
 import play.api.db.DB
 import play.api.mvc.Controller
-import play.api.Play.current
-
-import utils.controllers.CORSAction
-import utils.controllers.TierMonthInfo
 import utils.Resource
+import utils.controllers.{CORSAction, TierMonthInfo}
 
 object Metadata extends Controller {
 

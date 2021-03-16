@@ -1,20 +1,10 @@
 package controllers
 
-import anorm.Row
-import anorm.SQL
-
-import play.api.db.DB
-import play.api.libs.json.Json
-import play.api.libs.json.JsNull
-import play.api.libs.json.JsNumber
-import play.api.libs.json.JsObject
-import play.api.libs.json.JsString
-import play.api.libs.json.JsValue
-import play.api.libs.json.JsUndefined
-import play.api.mvc.Action
-import play.api.mvc.Controller
+import anorm.{Row, SQL}
 import play.api.Play.current
-
+import play.api.db.DB
+import play.api.libs.json.{JsString, JsUndefined, JsValue, Json}
+import play.api.mvc.{Action, Controller}
 import utils.Resource
 
 trait ValidationResult

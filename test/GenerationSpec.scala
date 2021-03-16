@@ -1,14 +1,9 @@
+import org.junit.runner._
 import org.specs2.mutable._
 import org.specs2.runner._
-import org.junit.runner._
-
-import play.api.test._
+import play.api.libs.json.{JsNull, JsNumber, JsObject, JsValue}
 import play.api.test.Helpers._
-
-import play.api.libs.json.JsNull
-import play.api.libs.json.JsNumber
-import play.api.libs.json.JsObject
-import play.api.libs.json.JsValue
+import play.api.test._
 
 import scala.concurrent._
 

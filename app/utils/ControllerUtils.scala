@@ -1,9 +1,6 @@
 package utils.controllers
 
-import play.api.mvc.Action
-import play.api.mvc.AnyContent
-import play.api.mvc.Request
-import play.api.mvc.Result
+import play.api.mvc.{Action, AnyContent, Request, Result}
 
 object CORSAction {
   def apply(block: Request[AnyContent] => Result): Action[AnyContent] = (

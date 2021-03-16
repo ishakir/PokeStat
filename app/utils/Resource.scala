@@ -1,13 +1,6 @@
 package utils
 
-import play.api.libs.json.Json
-import play.api.libs.json.JsArray
-import play.api.libs.json.JsNull
-import play.api.libs.json.JsNumber
-import play.api.libs.json.JsObject
-import play.api.libs.json.JsString
-import play.api.libs.json.JsValue
-
+import play.api.libs.json.{JsArray, JsObject, JsString, JsValue, Json}
 import utils.controllers.TierMonthInfo
 
 object Resource {
